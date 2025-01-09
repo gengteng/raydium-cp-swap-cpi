@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 
+use crate::{AmmConfig, ObservationState, PoolState};
+
 #[account]
 pub struct AccountPlaceholder {}
 
@@ -12,7 +14,7 @@ pub struct CreateAmmConfig<'info> {
 
     /// Initialize config state account to store protocol owner address and fee rates.
     #[account(mut)]
-    pub amm_config: Account<'info, AccountPlaceholder>,
+    pub amm_config: Account<'info, AmmConfig>,
 
     pub system_program: Account<'info, AccountPlaceholder>,
 }
@@ -24,7 +26,7 @@ pub struct UpdateAmmConfig<'info> {
 
     /// Amm config account to be changed
     #[account(mut)]
-    pub amm_config: Account<'info, AccountPlaceholder>,
+    pub amm_config: Account<'info, AmmConfig>,
 }
 
 #[derive(Accounts)]
@@ -32,7 +34,7 @@ pub struct UpdatePoolStatus<'info> {
     pub authority: Signer<'info>,
 
     #[account(mut)]
-    pub pool_state: Account<'info, AccountPlaceholder>,
+    pub pool_state: AccountLoader<'info, PoolState>,
 }
 
 #[derive(Accounts)]
@@ -45,10 +47,10 @@ pub struct CollectProtocolFee<'info> {
 
     /// Pool state stores accumulated protocol fee amount
     #[account(mut)]
-    pub pool_state: Account<'info, AccountPlaceholder>,
+    pub pool_state: AccountLoader<'info, PoolState>,
 
     /// Amm config account stores owner
-    pub amm_config: Account<'info, AccountPlaceholder>,
+    pub amm_config: Account<'info, AmmConfig>,
 
     /// The address that holds pool tokens for token_0
     #[account(mut)]
@@ -91,10 +93,10 @@ pub struct CollectFundFee<'info> {
 
     /// Pool state stores accumulated protocol fee amount
     #[account(mut)]
-    pub pool_state: Account<'info, AccountPlaceholder>,
+    pub pool_state: AccountLoader<'info, PoolState>,
 
     /// Amm config account stores fund_owner
-    pub amm_config: Account<'info, AccountPlaceholder>,
+    pub amm_config: Account<'info, AmmConfig>,
 
     /// The address that holds pool tokens for token_0
     #[account(mut)]
@@ -134,14 +136,14 @@ pub struct Initialize<'info> {
     pub creator: Signer<'info>,
 
     /// Which config the pool belongs to.
-    pub amm_config: Account<'info, AccountPlaceholder>,
+    pub amm_config: Account<'info, AmmConfig>,
 
     /// CHECK: pool vault and lp mint authority
     pub swap_authority: Account<'info, AccountPlaceholder>,
 
     /// CHECK: Initialize an account to store the pool state
     #[account(mut)]
-    pub pool_state: Account<'info, AccountPlaceholder>,
+    pub pool_state: AccountLoader<'info, PoolState>,
 
     /// Token_0 mint, the key must smaller then token_1 mint.
     pub token_0_mint: Account<'info, AccountPlaceholder>,
@@ -179,7 +181,7 @@ pub struct Initialize<'info> {
 
     /// an account to store oracle observations
     #[account(mut)]
-    pub observation_state: Account<'info, AccountPlaceholder>,
+    pub observation_state: AccountLoader<'info, ObservationState>,
 
     /// Program to create mint account and mint tokens
     pub token_program: Account<'info, AccountPlaceholder>,
@@ -209,7 +211,7 @@ pub struct Deposit<'info> {
     pub authority: Account<'info, AccountPlaceholder>,
 
     #[account(mut)]
-    pub pool_state: Account<'info, AccountPlaceholder>,
+    pub pool_state: AccountLoader<'info, PoolState>,
 
     /// Owner lp token account
     #[account(mut)]
@@ -260,7 +262,7 @@ pub struct Withdraw<'info> {
 
     /// Pool state account
     #[account(mut)]
-    pub pool_state: Account<'info, AccountPlaceholder>,
+    pub pool_state: AccountLoader<'info, PoolState>,
 
     /// Owner lp token account
     #[account(mut)]
@@ -314,11 +316,11 @@ pub struct Swap<'info> {
     pub authority: Account<'info, AccountPlaceholder>,
 
     /// The factory state to read protocol fees
-    pub amm_config: Account<'info, AccountPlaceholder>,
+    pub amm_config: Account<'info, AmmConfig>,
 
     /// The program account of the pool in which the swap will be performed
     #[account(mut)]
-    pub pool_state: Account<'info, AccountPlaceholder>,
+    pub pool_state: AccountLoader<'info, PoolState>,
 
     /// The user token account for input token
     #[account(mut)]
@@ -352,5 +354,5 @@ pub struct Swap<'info> {
 
     /// The program account for the most recent oracle observation
     #[account(mut)]
-    pub observation_state: Account<'info, AccountPlaceholder>,
+    pub observation_state: AccountLoader<'info, ObservationState>,
 }
