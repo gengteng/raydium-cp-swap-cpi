@@ -2,6 +2,7 @@
 
 use anchor_lang::prelude::*;
 
+pub mod account;
 pub mod context;
 use context::*;
 
