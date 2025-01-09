@@ -6,7 +6,7 @@ edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "raydium_clmm_cpi"
+name = "raydium_cp_swap_cpi"
 
 [features]
 default = ["cpi"]
